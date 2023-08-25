@@ -17,10 +17,12 @@
   },
   "author": "hot3eed",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@types/frida-gum": "^16.2.0",
     "@types/node": "^14.14.6",
+    "@frida/base64-js": "^2.0.3",
     "frida-compile": "^10.0.0"
   }
 }

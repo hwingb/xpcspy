@@ -12,8 +12,13 @@ export function formatConnectionDescription(connectionDesc: string) {
 export function formatMessageDescription(messageDesc: string, parsingResult: IParsingResult[]): string {
     var s = messageDesc;
     for (let result of parsingResult) {
-        s = s.replace(new RegExp(`(${result.key}.*\n)`), 
-                                `$1Parsed ${result.format} data for key '${result.key}': \n${result.data}\n`);
+        if (result.format == 'bplist17') {
+            s = 'bplist17:' + result.data
+        }
+        else {
+            s = s.replace(new RegExp(`(${result.key}.*\n)`), 
+                                    `$1Parsed ${result.format} data for key '${result.key}': \n${result.data}\n`);
+        }
     }
 
     return s; 

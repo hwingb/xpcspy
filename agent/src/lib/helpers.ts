@@ -28,7 +28,7 @@ export function objcObjectDebugDesc(ptr: NativePointer) {
     const objcObject = new ObjC.Object(ptr);
 
     if (objcObject.$className === "OS_xpc_dictionary") {
-        const entries = xpcDictionaryGetCount.call(objcObject);
+        const entries: number = <number> xpcDictionaryGetCount.call(objcObject);
         if (entries > 0) {
             return debugDescriptionForXPCDictionary(objcObject, entries);
         }
@@ -91,7 +91,7 @@ function hexStringForBytes(bytesPtr: NativePointer, length: Object) {
     let lenghtInt: number = <number> length.valueOf(); 
     let hexString = "";
     let formatString = "%02lx"
-    for (let i = 0; i < length.valueOf(); i++ ) {
+    for (let i = 0; i < lenghtInt; i++ ) {
         let byte = bytesPtr.add(i); 
         let byteVal = byte.readU8();
         // send({

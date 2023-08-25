@@ -6,6 +6,7 @@ import { xpcGetType,
         xpcDataGetBytesPtr,
         xpcDataGetLength} from '../lib/systemFunctions';
 import { resourceLimits } from 'worker_threads';
+import { fromByteArray } from "base64-js/index";
 
 export function parseBPListKeysRecursively(
     connection: NativePointer,
@@ -77,6 +78,19 @@ function parseKnownBPList(
             data: objcObjectDebugDesc(<NativePointer>__CFBinaryPlistCreate15.call(bytesPtr, length, ptr(0x0))),
             format: 'bplist15'
         }
+    } else if (bplistFmt == 'bplist17') {
+        const plistData = bytesPtr.readByteArray(length)
+        const hexdumpPlistData = hexdump(plistData, {
+            ansi: true,
+            header: false
+        })
+
+        const plist_b64 = fromByteArray(new Uint8Array(plistData))
+        return {
+            key: null,
+            data: plist_b64,
+            format: 'bplist17'
+        }
     } else if (bplistFmt == 'bplist00') {
         return parseBPlist00(bytesPtr, length);
     }
@@ -117,5 +131,5 @@ function parseBPlist00(bytesPtr: NativePointer, length: number): IParsingResult 
 }
 
 function isKnownBPListData(magic: string | null): boolean {
-    return magic === "bplist00" || magic === "bplist15";
+    return magic === "bplist00" || magic === "bplist15" || magic === "bplist17";
 }
