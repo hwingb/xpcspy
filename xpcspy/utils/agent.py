@@ -6,6 +6,7 @@ import frida
 from plist17lib import _BinaryPlist17Parser
 from io import BytesIO
 import json
+import base64
 
 from ..lib.types import Event
 import datetime
@@ -58,30 +59,17 @@ class Agent:
             timestamp = message['payload']['message']['timestamp']
             data = message['payload']['message']['data']
             data_message : str = data["message"]
+            # Special case for bplist17, as it is parsed on the python side
             if isinstance(data_message, str) and data_message.startswith('bplist17:'):
                 data_message_parts = data_message.split(':')
                 if len(data_message_parts) > 1:
                     data_message_b64 = data_message_parts[1]
-                    import base64
                     base64_bytes = data_message_b64.encode('ascii')
                     plist_bytes = base64.b64decode(base64_bytes)
                     data["message"] = self._parseBPlist17(plist_bytes=plist_bytes)
 
             self._pending_events[timestamp][-1].data = data
         
-        # Special case for bplist17, as it is parsed on the python side
-        elif mtype == 'agent:trace:data:bplist17':
-            timestamp = message['payload']['message']['timestamp']
-            data = message['payload']['message']['data']
-
-            buffer = bytes.fromhex(data)
-            fp = BytesIO(buffer)
-            parser1 = _BinaryPlist17Parser(dict_type=dict)
-            fp.seek(0)
-            result = parser1.parse(fp, with_type_info=False)
-            bplist_json = json.dumps(result, indent=2)
-            print(bplist_json)
-            self._pending_events[timestamp][-1].data = bplist_json
         else:
             ui._print(f"Unhandled message {message}")
 
@@ -110,5 +98,4 @@ class Agent:
         fp.seek(0)
         result = parser1.parse(fp, with_type_info=False)
         bplist_json = json.dumps(result, indent=2)
-        # print(bplist_json)
         return  bplist_json
