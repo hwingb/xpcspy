@@ -19,7 +19,8 @@ setup(
     keywords=['macos', 'ios', 'xnu', 'xpc', 'frida'],
     version=__version__,
     packages=find_packages(),
-    install_requires=requirements,
+    # install_requires=requirements,
+    dependency_links=requirements,
     package_data={
         'xpcspy': [os.path.join(cwd, './_agent.js')]
         },
