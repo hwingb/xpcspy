@@ -1,3 +1,5 @@
+from frida import __version__ as frida_version
+from .. import __version__
 from frida_tools.application import ConsoleApplication
 from frida_tools.tracer import UI, OutputFile
 
@@ -7,7 +9,7 @@ from ..lib.types import Filter
 
 class XPCSpyApplication(ConsoleApplication, UI):
     def _usage(self):
-        return "%(prog)s [options] target"
+        return f"%(prog)s [options] target\nversion {__version__}\nfrida version {frida_version}"
 
     def _needs_target(self):
         return True
